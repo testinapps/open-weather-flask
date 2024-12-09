@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="open-weather-flask",
-    version="0.1.0",
+    version="0.1.1",
     author="Yoad Paket",
     author_email="heyyoad@gmail.com",
     description="A Python Flask API to fetch weather data",

@@ -1,36 +1,41 @@
 import unittest
+from unittest.mock import patch, MagicMock
 from weather_fetcher.core import WeatherFetcher
-from unittest.mock import patch
 
 
 class TestWeatherFetcher(unittest.TestCase):
-    def setUp(self):
-        # Mock API key
-        self.fetcher = WeatherFetcher(api_key="test_api_key")
-
-    @patch("weather_fetcher.core.requests.get")
-    def test_get_weather_success(self, mock_get):
+    @patch.dict("os.environ", {"WEATHER_API_KEY": "test_api_key"})
+    @patch("weather_fetcher.api.WeatherAPI.fetch_weather")
+    def test_get_weather_success(self, mock_fetch_weather):
         # Mock API response
         mock_response = {
             "weather": [{"description": "clear sky"}],
             "main": {"temp": 298.15},
         }
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = mock_response
+        mock_fetch_weather.return_value = mock_response
 
-        # Test fetching weather
-        response = self.fetcher.get_weather("New York")
+        # Instantiate WeatherFetcher and test
+        fetcher = WeatherFetcher()
+        response = fetcher.get_weather("New York")
         self.assertIn("weather", response)
         self.assertEqual(response["main"]["temp"], 298.15)
 
-    @patch("weather_fetcher.core.requests.get")
-    def test_get_weather_failure(self, mock_get):
+    @patch.dict("os.environ", {"WEATHER_API_KEY": "test_api_key"})
+    @patch("weather_fetcher.api.WeatherAPI.fetch_weather")
+    def test_get_weather_failure(self, mock_fetch_weather):
         # Mock API failure
-        mock_get.return_value.status_code = 404
-        mock_get.return_value.json.return_value = {"message": "city not found"}
+        mock_fetch_weather.side_effect = Exception("API error")
 
-        with self.assertRaises(ValueError):
-            self.fetcher.get_weather("Invalid City")
+        fetcher = WeatherFetcher()
+        with self.assertRaises(Exception) as context:
+            fetcher.get_weather("Invalid City")
+        self.assertIn("API error", str(context.exception))
+
+    @patch.dict("os.environ", {})
+    def test_missing_api_key(self):
+        with self.assertRaises(ValueError) as context:
+            WeatherFetcher()
+        self.assertIn("API key not found", str(context.exception))
 
 
 if __name__ == "__main__":

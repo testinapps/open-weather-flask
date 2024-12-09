@@ -23,6 +23,7 @@ setup(
     ],
     extras_require={
         "dev": [
+            "flake8==6.1.0",
             "black==23.9.1",
             "pytest==8.3.4",
         ]

@@ -8,9 +8,9 @@ app = Flask(__name__)
 fetcher = WeatherFetcher()
 
 
-@app.route('/weather', methods=['GET'])
+@app.route("/weather", methods=["GET"])
 def get_weather():
-    location = request.args.get('location', '')
+    location = request.args.get("location", "")
     if not location:
         return jsonify({"error": "Location is required"}), 400
 
@@ -22,7 +22,7 @@ def get_weather():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/status', methods=['GET'])
+@app.route("/status", methods=["GET"])
 def status():
     """Return the server status."""
     return jsonify({"status": "running"})

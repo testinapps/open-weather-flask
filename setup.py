@@ -26,6 +26,7 @@ setup(
             "flake8==6.1.0",
             "black==23.9.1",
             "pytest==8.3.4",
+            "pytest-mock==3.14.0",
         ]
     },
     url="https://github.com/testinapps/python-weather-app",

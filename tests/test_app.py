@@ -31,8 +31,9 @@ class TestWeatherFetcher(unittest.TestCase):
             fetcher.get_weather("Invalid City")
         self.assertIn("API error", str(context.exception))
 
-    @patch.dict("os.environ", {})
+    @patch.dict("os.environ", {}, clear=True)  # Clear environment for this test
     def test_missing_api_key(self):
+        # Ensure WEATHER_API_KEY is not set
         with self.assertRaises(ValueError) as context:
             WeatherFetcher()
         self.assertIn("API key not found", str(context.exception))
